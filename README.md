@@ -18,7 +18,7 @@ Deep Matrix Factorization (2) | 0.814 | 0.815<br>
 Deep Matrix Factorization (3) | 0.839 | 0.836<br>
 Deep Matrix Factorization (4) | 0.795 | 0.798<br>
 
-<Notes><br>
+Notes<br>
 (1) Structure in which the interaction input part is Deep<br>
 (2) The structure where the part after the interaction is Deep<br>
 (3) Structure that made (2) like ResNet<br>
