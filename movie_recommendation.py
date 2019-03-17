@@ -135,6 +135,7 @@ class MovieRecommendation:
         rcmd.fit(userIndex_train, movieIndex_train, rating_df_train['rating'].values, batch_size=128, epochs=epochs, 
                  user_ids_val=userIndex_test, item_ids_val=movieIndex_test, rating_val=rating_df_test['rating'].values)
 
+        rcmd.save_bias_latent(output_dir)
         #
         pre_rating = rcmd.predict(userIndex_train, movieIndex_train)
         rmse_train = MovieRecommendation.rmse(pre_rating, rating_df_train['rating'].values)
@@ -178,6 +179,7 @@ class MovieRecommendation:
         rcmd.fit(userIndex_train, movieIndex_train, rating_df_train['rating'].values, batch_size=128, epochs=epochs, 
                  user_ids_val=userIndex_test, item_ids_val=movieIndex_test, rating_val=rating_df_test['rating'].values)
 
+        rcmd.save_bias_latent(output_dir)
         #
         pre_rating = rcmd.predict(userIndex_train, movieIndex_train)
         rmse_train = MovieRecommendation.rmse(pre_rating, rating_df_train['rating'].values)
@@ -221,6 +223,7 @@ class MovieRecommendation:
         rcmd.fit(userIndex_train, movieIndex_train, rating_df_train['rating'].values, batch_size=128, epochs=epochs, 
                  user_ids_val=userIndex_test, item_ids_val=movieIndex_test, rating_val=rating_df_test['rating'].values)
 
+        rcmd.save_bias_latent(output_dir)
         #
         pre_rating = rcmd.predict(userIndex_train, movieIndex_train)
         rmse_train = MovieRecommendation.rmse(pre_rating, rating_df_train['rating'].values)
@@ -265,6 +268,7 @@ class MovieRecommendation:
         rcmd.fit(userIndex_train, movieIndex_train, rating_df_train['rating'].values, batch_size=128, epochs=epochs, 
                  user_ids_val=userIndex_test, item_ids_val=movieIndex_test, rating_val=rating_df_test['rating'].values)
 
+        rcmd.save_bias_latent(output_dir)
         #
         pre_rating = rcmd.predict(userIndex_train, movieIndex_train)
         rmse_train = MovieRecommendation.rmse(pre_rating, rating_df_train['rating'].values)
@@ -308,6 +312,7 @@ class MovieRecommendation:
         rcmd.fit(userIndex_train, movieIndex_train, rating_df_train['rating'].values, batch_size=128, epochs=epochs, 
                  user_ids_val=userIndex_test, item_ids_val=movieIndex_test, rating_val=rating_df_test['rating'].values)
 
+        rcmd.save_bias_latent(output_dir)
         #
         pre_rating = rcmd.predict(userIndex_train, movieIndex_train)
         rmse_train = MovieRecommendation.rmse(pre_rating, rating_df_train['rating'].values)
@@ -440,6 +445,8 @@ class MovieRecommendation:
 #MovieRecommendation.test_mf_4(datafilename='ratings.csv', cross_term_l2=0.000001, epochs=10, hidden_l2=[0.00000001])
 #MovieRecommendation.test_mf_5(datafilename='ratings.csv', cross_term_l2=0.0001, epochs=10, hidden_l2=[0.00001], hidden_dropout_rates=[0])
 
+#MovieRecommendation.test_mf_1(datafilename='ratings_test.csv', cross_term_l2=0.00001, epochs=1)
+
 k1 = 0.1
 k2 = (85570+69440)/(2319780+218510)
 MovieRecommendation.test_mf_1(datafilename='ratings.csv', cross_term_l2=k1*0.00001, epochs=10)
@@ -454,3 +461,6 @@ MovieRecommendation.test_random_base(datafilename='ratings.csv')
 MovieRecommendation.test_allmean_base(datafilename='ratings.csv')
 MovieRecommendation.test_mean_base_item(datafilename='ratings.csv')
 MovieRecommendation.test_mean_base_user(datafilename='ratings.csv')
+
+
+
