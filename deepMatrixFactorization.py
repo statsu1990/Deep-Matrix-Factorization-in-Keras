@@ -16,6 +16,7 @@ from keras.utils import plot_model
 
 import matplotlib.pyplot as plt
 
+import pandas as pd
 import copy
 import os
 from datetime import datetime
@@ -139,6 +140,13 @@ class KerasBase:
 
         return
 
+    @staticmethod
+    def get_weights(model, layer_name=None):
+        if layer_name is None:
+            return model.get_weights()
+        else:
+            lyr = model.get_layer(name=layer_name)
+            return lyr.get_weights()
 
     @staticmethod
     def activation(act='relu'):
@@ -193,18 +201,18 @@ class DeepMatrixFactorization:
         #user bias
         u_bias = None
         if user_bias:
-            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0)
+            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0, latent_layer_name='user_bias')
 
         #item bias
         i_bias = None
         if item_bias:
-            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0)
+            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0, latent_layer_name='item_bias')
 
         #cross term
         crs_trm = None
         if cross_term:
-            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2)
-            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2)
+            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2, latent_layer_name='user_latent')
+            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2, latent_layer_name='item_latent')
             crs_trm = self.__cross_term(crs_u, crs_i, merge='sum')
 
         #concatenate
@@ -241,18 +249,18 @@ class DeepMatrixFactorization:
         #user bias
         u_bias = None
         if user_bias:
-            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0)
+            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0, latent_layer_name='user_bias')
 
         #item bias
         i_bias = None
         if item_bias:
-            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0)
+            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0, latent_layer_name='item_bias')
 
         #cross term
         crs_trm = None
         if cross_term:
-            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_l2s=hidden_l2, hidden_dropout_rates=hidden_dropout_rates)
-            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_l2s=hidden_l2, hidden_dropout_rates=hidden_dropout_rates)
+            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_l2s=hidden_l2, hidden_dropout_rates=hidden_dropout_rates, latent_layer_name='user_latent')
+            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_l2s=hidden_l2, hidden_dropout_rates=hidden_dropout_rates, latent_layer_name='item_latent')
             crs_trm = self.__cross_term(crs_u, crs_i, merge='sum')
 
         #concatenate
@@ -289,18 +297,18 @@ class DeepMatrixFactorization:
         #user bias
         u_bias = None
         if user_bias:
-            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0)
+            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0, latent_layer_name='user_bias')
 
         #item bias
         i_bias = None
         if item_bias:
-            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0)
+            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0, latent_layer_name='item_bias')
 
         #cross term
         crs_trm = None
         if cross_term:
-            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2)
-            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2)
+            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2, latent_layer_name='user_latent')
+            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2, latent_layer_name='item_latent')
             crs_trm = self.__cross_term(crs_u, crs_i, merge='sum', hidden_nodes=hidden_nodes_crossterm, hidden_l2s=hidden_l2, hidden_dropout_rates=hidden_dropout_rates)
 
         #concatenate
@@ -337,18 +345,18 @@ class DeepMatrixFactorization:
         #user bias
         u_bias = None
         if user_bias:
-            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0)
+            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0, latent_layer_name='user_bias')
 
         #item bias
         i_bias = None
         if item_bias:
-            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0)
+            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0, latent_layer_name='item_bias')
 
         #cross term
         crs_trm = None
         if cross_term:
-            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_dropout_rates=hidden_dropout_rates)
-            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_dropout_rates=hidden_dropout_rates)
+            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_dropout_rates=hidden_dropout_rates, latent_layer_name='user_latent')
+            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2, hidden_nodes=hidden_nodes_latent, hidden_dropout_rates=hidden_dropout_rates, latent_layer_name='item_latent')
             crs_trm = self.__cross_term(crs_u, crs_i, merge='sum', hidden_nodes=hidden_nodes_crossterm, hidden_l2s=hidden_l2, hidden_dropout_rates=hidden_dropout_rates)
 
         #concatenate
@@ -385,19 +393,19 @@ class DeepMatrixFactorization:
         #user bias
         u_bias = None
         if user_bias:
-            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0)
+            u_bias = self.__bias_term(input_id=input_user_id, unique_id_num=self.unique_user_num, l2=0, latent_layer_name='user_bias')
 
         #item bias
         i_bias = None
         if item_bias:
-            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0)
+            i_bias = self.__bias_term(input_id=input_item_id, unique_id_num=self.unique_item_num, l2=0, latent_layer_name='item_bias')
 
         #cross term
         crs_trm = None
         res_crs_trm = None
         if cross_term:
-            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2)
-            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2)
+            crs_u = self.__single_term(input_id=input_user_id, unique_id_num=self.unique_user_num, output_dim=latent_num, l2=cross_term_l2, latent_layer_name='user_latent')
+            crs_i = self.__single_term(input_id=input_item_id, unique_id_num=self.unique_item_num, output_dim=latent_num, l2=cross_term_l2, latent_layer_name='item_latent')
             res_crs_trm = self.__res_cross_term(crs_u, crs_i, merge='sum', hidden_nodes=hidden_nodes_crossterm, hidden_l2s=hidden_l2, hidden_dropout_rates=hidden_dropout_rates)
 
         #concatenate
@@ -422,7 +430,6 @@ class DeepMatrixFactorization:
         self.model = Model(inputs=[input_user_id, input_item_id], outputs=y)
 
         return
-
 
     #model of bias term
     def __single_term(self, input_id, unique_id_num, output_dim=1, 
@@ -473,7 +480,7 @@ class DeepMatrixFactorization:
                 hl = Dropout(drp_rt)(hl)
 
         return hl
-    
+
     def __bias_term(self, input_id, unique_id_num, l2=0, latent_layer_name=None):
         '''
         input -> embedding -> flatten
@@ -570,14 +577,17 @@ class DeepMatrixFactorization:
 
         return crs_trm
 
-
     def compile(self, optimizer='adam', loss='mean_squared_error'):
         self.model.compile(optimizer=optimizer, loss=loss)
         return
 
     def fit(self, user_ids, item_ids, rating, batch_size, epochs, 
                   user_ids_val=None, item_ids_val=None, rating_val=None):
-        
+        '''
+        user_ids and item_ids must be 0, 1, 2, 3, ...
+        '''
+
+
         # validation data
         val_data = None
         if (user_ids_val is not None) and (item_ids_val is not None) and (rating_val is not None):
@@ -592,6 +602,45 @@ class DeepMatrixFactorization:
 
     def predict(self, user_ids, item_ids):
         return self.model.predict([user_ids, item_ids])[:,0]
+
+    def save_bias_latent(self, output_dir):
+        self.__save_Embedding(output_dir=output_dir, layer_name='user_bias')
+        self.__save_Embedding(output_dir=output_dir, layer_name='item_bias')
+        self.__save_Embedding(output_dir=output_dir, layer_name='user_latent')
+        self.__save_Embedding(output_dir=output_dir, layer_name='item_latent')
+        return
+
+    def __save_Embedding(self, output_dir, layer_name):
+        weights = KerasBase.get_weights(self.model, layer_name=layer_name)[0].copy()
+        #
+        id_num = weights.shape[0]
+        latent_num = weights.shape[1]
+        #
+        oup = weights
+        # id
+        ids = np.arange(id_num)[:,np.newaxis]
+        oup = np.concatenate([ids, oup], axis=1)
+        # header
+        header = []
+        header.append('id')
+        for ilt in range(latent_num):
+            header.append('latent' + str(ilt))
+        header = np.array(header)[np.newaxis,:]
+        oup = np.concatenate([header, oup])
+        # to pandas
+        oup = pd.DataFrame(oup)
+
+        #save
+        #np.savetxt(os.path.join(output_dir, layer_name + '.csv'), oup, delimiter=',')
+        oup.to_csv(os.path.join(output_dir, layer_name + '.csv'), header=False, index=False)
+
+        return
+
+
+
+
+
+
 
 
 import numpy as np
